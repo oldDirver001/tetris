@@ -1,0 +1,35 @@
+.score-panel {
+  background: var(--bg-panel);
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.score-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.score-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.score-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-value.highlight {
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent-glow);
+}

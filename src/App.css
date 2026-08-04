@@ -1,0 +1,144 @@
+.app {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #13132a 0%, var(--bg-dark) 70%);
+  overflow: auto;
+}
+
+.game-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.game-title {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  background: linear-gradient(135deg, #22d3ee 0%, #a855f7 50%, #f97316 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.3));
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 180px;
+}
+
+.board-wrapper {
+  position: relative;
+}
+
+/* 遮罩层 */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 16, 0.85);
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.overlay-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+}
+
+.overlay-content h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.gameover-title {
+  color: #ef4444 !important;
+  text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+
+.overlay-content p {
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.final-score {
+  font-size: 22px !important;
+  font-weight: 700;
+  color: var(--accent) !important;
+}
+
+.final-stats {
+  font-size: 13px !important;
+  margin-top: -8px;
+}
+
+/* 按钮 */
+.btn-primary {
+  margin-top: 8px;
+  padding: 12px 32px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+  border-radius: 8px;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(108, 92, 231, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(108, 92, 231, 0.6);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* 响应式 */
+@media (max-width: 900px) {
+  .game-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .side-panel {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: auto;
+  }
+
+  .side-panel > * {
+    flex: 1;
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 24px;
+    letter-spacing: 4px;
+  }
+}

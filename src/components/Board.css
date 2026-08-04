@@ -1,0 +1,72 @@
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  background: var(--bg-panel);
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 0 40px rgba(108, 92, 231, 0.15), inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.game-board {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: #050510;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.board-row {
+  display: flex;
+  gap: 1px;
+}
+
+.board-row.clearing {
+  animation: lineFlash 0.3s ease-out;
+}
+
+@keyframes lineFlash {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; filter: brightness(3); }
+  100% { opacity: 1; }
+}
+
+.cell {
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.05s;
+}
+
+.cell.filled {
+  background: var(--cell-color, #fff);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    inset 2px 2px 0 rgba(255, 255, 255, 0.3),
+    inset -2px -2px 0 rgba(0, 0, 0, 0.3),
+    0 0 6px var(--cell-glow, transparent);
+}
+
+.cell[data-type='ghost'] {
+  background: transparent;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+  .cell {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cell {
+    width: 18px;
+    height: 18px;
+  }
+}
