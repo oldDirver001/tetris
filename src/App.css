@@ -136,9 +136,190 @@
   }
 }
 
-@media (max-width: 480px) {
-  .game-title {
-    font-size: 24px;
-    letter-spacing: 4px;
+/* ===== 移动端/触屏布局：顶部信息 / 游戏区域（棋盘+下一个） / 方向键 / 落下按钮 ===== */
+@media (max-width: 768px) {
+  body.is-touch .app {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    padding: 6px;
+  }
+
+  body.is-touch .game-wrapper {
+    height: 100%;
+    width: 100%;
+    max-width: 420px;
+    padding: 0 4px 6px;
+    gap: 6px;
+    justify-content: flex-start;
+  }
+
+  body.is-touch .game-title {
+    font-size: 16px;
+    letter-spacing: 3px;
+    margin: 0;
+  }
+
+  /* 顶部：分数 + 暂停 */
+  body.is-touch .mobile-top-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  body.is-touch .mobile-top-bar .score-panel {
+    flex: 1;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 6px 8px;
+  }
+
+  body.is-touch .mobile-top-bar .score-item {
+    flex-direction: row;
+    gap: 4px;
+    align-items: baseline;
+  }
+
+  body.is-touch .mobile-top-bar .score-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  body.is-touch .mobile-top-bar .score-value {
+    font-size: 15px;
+  }
+
+  body.is-touch .mobile-pause-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+
+  body.is-touch .mobile-pause-btn:active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* 游戏区域：棋盘独占中间大块，棋盘自适应撑满 */
+  body.is-touch .mobile-game-area {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-panel);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 4px;
+    box-shadow: 0 0 40px rgba(108, 92, 231, 0.12);
+  }
+
+  /* 棋盘直接撑满游戏区域 */
+  body.is-touch .mobile-game-area .board-wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  /* 下方控制行：左侧下一个，右侧方向键 */
+  body.is-touch .mobile-controls-row {
+    width: 100%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 4px;
+  }
+
+  body.is-touch .mobile-controls-row .next-piece-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 8px 10px;
+    align-items: flex-start;
+    min-width: 80px;
+  }
+
+  body.is-touch .mobile-controls-row .next-piece-panel h3 {
+    font-size: 10px;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+  }
+
+  body.is-touch .mobile-controls-row .next-cell {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* 方向键区域 */
+  body.is-touch .touch-controls {
+    flex-shrink: 0;
+  }
+
+  /* 底部横向落下按钮 */
+  body.is-touch .mobile-drop-bar {
+    width: 100%;
+    height: 46px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(239, 68, 68, 0.25));
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.05s, background 0.1s;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+  }
+
+  body.is-touch .mobile-drop-bar:active {
+    transform: translateY(2px);
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.55), rgba(239, 68, 68, 0.55));
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.45);
+  }
+
+  /* 触屏设备隐藏键盘操作说明 */
+  body.is-touch .controls-panel {
+    display: none;
+  }
+}
+
+/* 超窄屏：进一步压缩 */
+@media (max-width: 380px) {
+  body.is-touch .game-title {
+    display: none;
+  }
+
+  body.is-touch .mobile-drop-bar {
+    height: 42px;
+    font-size: 14px;
   }
 }
