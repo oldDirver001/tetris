@@ -1,7 +1,12 @@
-import { TETROMINOES } from '../utils/tetrominoes';
+import type { CSSProperties } from 'react';
+import type { Tetromino } from '../utils/types';
 import './NextPiece.css';
 
-export default function NextPiece({ piece }) {
+interface NextPieceProps {
+  piece: Tetromino | null;
+}
+
+export default function NextPiece({ piece }: NextPieceProps) {
   if (!piece) {
     return (
       <div className="next-piece-panel">
@@ -18,17 +23,18 @@ export default function NextPiece({ piece }) {
   return (
     <div className="next-piece-panel">
       <h3>下一个</h3>
-      <div className="next-piece-grid" style={{ '--rows': rows, '--cols': cols }}>
+      <div className="next-piece-grid" style={{ '--rows': rows, '--cols': cols } as CSSProperties}>
         {shape.map((row, y) => (
           <div key={y} className="next-row">
             {row.map((cell, x) => (
               <div
                 key={x}
                 className={`next-cell ${cell ? 'filled' : ''}`}
-                style={cell ? {
-                  '--cell-color': piece.color,
-                  '--cell-glow': piece.color + '40',
-                } : {}}
+                style={
+                  cell
+                    ? ({ '--cell-color': piece.color, '--cell-glow': piece.color + '40' } as CSSProperties)
+                    : {}
+                }
               />
             ))}
           </div>

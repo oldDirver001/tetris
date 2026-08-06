@@ -44,7 +44,7 @@ export default function App() {
 
   // 键盘事件处理
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       // 空格键防止页面滚动
       if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
         e.preventDefault();
@@ -139,30 +139,20 @@ export default function App() {
         <h1 className="game-title">TETRIS</h1>
 
         {isTouch ? (
-          /* 移动端/触屏布局：顶部信息 / 游戏区域（棋盘+下一个） / 方向键 / 落下按钮 */
+          /* 移动端/触屏布局：顶部信息 / 游戏区域 / 方向键 / 落下按钮 */
           <>
             <div className="mobile-top-bar">
               <ScorePanel score={score} lines={lines} level={level} />
-              <button
-                className="mobile-pause-btn"
-                onClick={togglePause}
-                aria-label="暂停/继续"
-              >
+              <button className="mobile-pause-btn" onClick={togglePause} aria-label="暂停/继续">
                 ⏸
               </button>
             </div>
 
-            <div className="mobile-game-area">
-              {boardView}
-            </div>
+            <div className="mobile-game-area">{boardView}</div>
 
             <div className="mobile-controls-row">
               <NextPiece piece={nextPiece} />
-              <TouchControls
-                onMove={move}
-                onRotate={rotate}
-                onSoftDrop={drop}
-              />
+              <TouchControls onMove={move} onRotate={rotate} onSoftDrop={drop} />
             </div>
 
             <button

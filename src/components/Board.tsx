@@ -1,9 +1,18 @@
+import type { CSSProperties } from 'react';
 import { BOARD_WIDTH, BOARD_HEIGHT } from '../utils/constants';
+import type { Board as BoardType, Cell, Tetromino } from '../utils/types';
 import './Board.css';
 
-export default function Board({ board, currentPiece, ghostY, clearingRows }) {
+interface BoardProps {
+  board: BoardType;
+  currentPiece: Tetromino | null;
+  ghostY: number;
+  clearingRows: number[];
+}
+
+export default function Board({ board, currentPiece, ghostY, clearingRows }: BoardProps) {
   // 构建用于渲染的网格：将当前方块和幽灵方块叠加到面板上
-  const displayBoard = board.map(row => [...row]);
+  const displayBoard: Cell[][] = board.map((row) => [...row]);
 
   // 叠加幽灵方块（投影）
   if (currentPiece && ghostY !== undefined) {
@@ -48,10 +57,11 @@ export default function Board({ board, currentPiece, ghostY, clearingRows }) {
               <div
                 key={x}
                 className={`cell ${cell ? 'filled' : ''}`}
-                style={cell && cell !== 'ghost' ? {
-                  '--cell-color': cell,
-                  '--cell-glow': cell + '40',
-                } : {}}
+                style={
+                  cell && cell !== 'ghost'
+                    ? ({ '--cell-color': cell, '--cell-glow': cell + '40' } as CSSProperties)
+                    : {}
+                }
                 data-type={cell === 'ghost' ? 'ghost' : ''}
               />
             ))}

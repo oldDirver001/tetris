@@ -1,7 +1,12 @@
 import './Controls.css';
 
+interface ControlItem {
+  key: string;
+  desc: string;
+}
+
 export default function Controls() {
-  const keys = [
+  const keys: ControlItem[] = [
     { key: '← →', desc: '左右移动' },
     { key: '↑', desc: '旋转' },
     { key: '↓', desc: '加速下落' },

@@ -1,6 +1,12 @@
 import './ScorePanel.css';
 
-export default function ScorePanel({ score, lines, level }) {
+interface ScorePanelProps {
+  score: number;
+  lines: number;
+  level: number;
+}
+
+export default function ScorePanel({ score, lines, level }: ScorePanelProps) {
   return (
     <div className="score-panel">
       <div className="score-item">

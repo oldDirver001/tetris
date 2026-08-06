@@ -1,0 +1,94 @@
+// 俄罗斯方块的7种形状及其旋转状态
+// 每种方块有多个旋转状态（矩阵），1表示有方块，0表示空
+import { BOARD_WIDTH } from './constants';
+import type { TetrominoType, Tetromino, TetrominoData } from './types';
+
+export const TETROMINOES: Record<TetrominoType, TetrominoData> = {
+  I: {
+    color: '#22d3ee',
+    glow: 'rgba(34, 211, 238, 0.5)',
+    shapes: [
+      [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
+      [[0, 0, 1, 0], [0, 0, 1, 0], [0, 0, 1, 0], [0, 0, 1, 0]],
+      [[0, 0, 0, 0], [0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0]],
+      [[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0]],
+    ],
+  },
+  O: {
+    color: '#fbbf24',
+    glow: 'rgba(251, 191, 36, 0.5)',
+    shapes: [
+      [[1, 1], [1, 1]],
+    ],
+  },
+  T: {
+    color: '#a855f7',
+    glow: 'rgba(168, 85, 247, 0.5)',
+    shapes: [
+      [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
+      [[0, 1, 0], [0, 1, 1], [0, 1, 0]],
+      [[0, 0, 0], [1, 1, 1], [0, 1, 0]],
+      [[0, 1, 0], [1, 1, 0], [0, 1, 0]],
+    ],
+  },
+  S: {
+    color: '#22c55e',
+    glow: 'rgba(34, 197, 94, 0.5)',
+    shapes: [
+      [[0, 1, 1], [1, 1, 0], [0, 0, 0]],
+      [[0, 1, 0], [0, 1, 1], [0, 0, 1]],
+      [[0, 0, 0], [0, 1, 1], [1, 1, 0]],
+      [[1, 0, 0], [1, 1, 0], [0, 1, 0]],
+    ],
+  },
+  Z: {
+    color: '#ef4444',
+    glow: 'rgba(239, 68, 68, 0.5)',
+    shapes: [
+      [[1, 1, 0], [0, 1, 1], [0, 0, 0]],
+      [[0, 0, 1], [0, 1, 1], [0, 1, 0]],
+      [[0, 0, 0], [1, 1, 0], [0, 1, 1]],
+      [[0, 1, 0], [1, 1, 0], [1, 0, 0]],
+    ],
+  },
+  J: {
+    color: '#3b82f6',
+    glow: 'rgba(59, 130, 246, 0.5)',
+    shapes: [
+      [[1, 0, 0], [1, 1, 1], [0, 0, 0]],
+      [[0, 1, 1], [0, 1, 0], [0, 1, 0]],
+      [[0, 0, 0], [1, 1, 1], [0, 0, 1]],
+      [[0, 1, 0], [0, 1, 0], [1, 1, 0]],
+    ],
+  },
+  L: {
+    color: '#f97316',
+    glow: 'rgba(249, 115, 22, 0.5)',
+    shapes: [
+      [[0, 0, 1], [1, 1, 1], [0, 0, 0]],
+      [[0, 1, 0], [0, 1, 0], [0, 1, 1]],
+      [[0, 0, 0], [1, 1, 1], [1, 0, 0]],
+      [[1, 1, 0], [0, 1, 0], [0, 1, 0]],
+    ],
+  },
+};
+
+// 随机生成一个方块类型
+export function randomTetrominoType(): TetrominoType {
+  const types = Object.keys(TETROMINOES) as TetrominoType[];
+  return types[Math.floor(Math.random() * types.length)];
+}
+
+// 创建一个新方块
+export function createTetromino(type: TetrominoType): Tetromino {
+  const data = TETROMINOES[type];
+  return {
+    type,
+    color: data.color,
+    glow: data.glow,
+    rotation: 0,
+    shape: data.shapes[0],
+    x: Math.floor((BOARD_WIDTH - data.shapes[0][0].length) / 2),
+    y: 0,
+  };
+}

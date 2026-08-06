@@ -1,16 +1,32 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { BOARD_WIDTH, BOARD_HEIGHT, GAME_STATUS, INITIAL_DROP_TIME, LINES_PER_LEVEL, SCORE_TABLE, getDropTime } from '../utils/constants';
+import type { Board, Shape, Tetromino, TetrominoType } from '../utils/types';
+import type { GameStatus } from '../utils/constants';
+import {
+  BOARD_WIDTH,
+  BOARD_HEIGHT,
+  GAME_STATUS,
+  INITIAL_DROP_TIME,
+  LINES_PER_LEVEL,
+  SCORE_TABLE,
+  getDropTime,
+} from '../utils/constants';
 import { TETROMINOES, randomTetrominoType, createTetromino } from '../utils/tetrominoes';
 
 // 创建空游戏面板
-function createEmptyBoard() {
+function createEmptyBoard(): Board {
   return Array.from({ length: BOARD_HEIGHT }, () =>
     Array.from({ length: BOARD_WIDTH }, () => null)
   );
 }
 
 // 检查碰撞
-function checkCollision(board, piece, shape, offsetX, offsetY) {
+function checkCollision(
+  board: Board,
+  piece: Tetromino,
+  shape: Shape,
+  offsetX: number,
+  offsetY: number
+): boolean {
   for (let y = 0; y < shape.length; y++) {
     for (let x = 0; x < shape[y].length; x++) {
       if (shape[y][x] === 0) continue;
@@ -29,8 +45,8 @@ function checkCollision(board, piece, shape, offsetX, offsetY) {
 }
 
 // 将方块固定到面板上
-function mergePiece(board, piece) {
-  const newBoard = board.map(row => [...row]);
+function mergePiece(board: Board, piece: Tetromino): Board {
+  const newBoard: Board = board.map((row) => [...row]);
   const shape = piece.shape;
   for (let y = 0; y < shape.length; y++) {
     for (let x = 0; x < shape[y].length; x++) {
@@ -47,12 +63,12 @@ function mergePiece(board, piece) {
 }
 
 // 消除已满的行，返回新面板和消除的行数
-function clearLines(board) {
-  const newBoard = board.map(row => [...row]);
+function clearLines(board: Board): { board: Board; linesCleared: number } {
+  const newBoard: Board = board.map((row) => [...row]);
   let linesCleared = 0;
 
   for (let y = BOARD_HEIGHT - 1; y >= 0; y--) {
-    if (newBoard[y].every(cell => cell !== null)) {
+    if (newBoard[y].every((cell) => cell !== null)) {
       newBoard.splice(y, 1);
       newBoard.unshift(Array.from({ length: BOARD_WIDTH }, () => null));
       linesCleared++;
@@ -64,7 +80,7 @@ function clearLines(board) {
 }
 
 // 计算幽灵方块（投影）的Y位置
-function getGhostY(board, piece) {
+function getGhostY(board: Board, piece: Tetromino): number {
   let ghostY = 0;
   while (!checkCollision(board, piece, piece.shape, 0, ghostY + 1)) {
     ghostY++;
@@ -72,39 +88,51 @@ function getGhostY(board, piece) {
   return piece.y + ghostY;
 }
 
+interface GameStateSnapshot {
+  status: GameStatus;
+  currentPiece: Tetromino | null;
+  board: Board;
+  level: number;
+}
+
 export function useTetris() {
-  const [board, setBoard] = useState(createEmptyBoard);
-  const [currentPiece, setCurrentPiece] = useState(null);
-  const [nextPiece, setNextPiece] = useState(null);
+  const [board, setBoard] = useState<Board>(createEmptyBoard);
+  const [currentPiece, setCurrentPiece] = useState<Tetromino | null>(null);
+  const [nextPiece, setNextPiece] = useState<Tetromino | null>(null);
   const [score, setScore] = useState(0);
   const [lines, setLines] = useState(0);
   const [level, setLevel] = useState(1);
-  const [status, setStatus] = useState(GAME_STATUS.READY);
+  const [status, setStatus] = useState<GameStatus>(GAME_STATUS.READY);
   const [dropTime, setDropTime] = useState(INITIAL_DROP_TIME);
-  const [clearingRows, setClearingRows] = useState([]);
+  const [clearingRows, setClearingRows] = useState<number[]>([]);
 
   const lastTimeRef = useRef(0);
-  const rafRef = useRef(null);
+  const rafRef = useRef<number | null>(null);
 
   // 用 ref 保存最新状态，避免游戏循环因依赖变化而频繁重启
-  const stateRef = useRef({});
+  const stateRef = useRef<GameStateSnapshot>({
+    status: GAME_STATUS.READY,
+    currentPiece: null,
+    board: createEmptyBoard(),
+    level: 1,
+  });
 
   // 生成新方块
-  const spawnPiece = useCallback((type) => {
+  const spawnPiece = useCallback((type?: TetrominoType): Tetromino => {
     return createTetromino(type || randomTetrominoType());
   }, []);
 
   // 使用 ref 保存 nextPiece 以在回调中访问最新值
-  const nextPieceRef = useRef(null);
+  const nextPieceRef = useRef<Tetromino | null>(null);
 
   // 方块落地后的处理
-  const lockPiece = useCallback((piece, currentBoard) => {
+  const lockPiece = useCallback((piece: Tetromino, currentBoard: Board) => {
     const merged = mergePiece(currentBoard, piece);
 
     // 找出满行
-    const fullRows = [];
+    const fullRows: number[] = [];
     for (let y = 0; y < BOARD_HEIGHT; y++) {
-      if (merged[y].every(cell => cell !== null)) {
+      if (merged[y].every((cell) => cell !== null)) {
         fullRows.push(y);
       }
     }
@@ -119,7 +147,7 @@ export function useTetris() {
         setBoard(clearedBoard);
         setClearingRows([]);
 
-        setLines(prevLines => {
+        setLines((prevLines) => {
           const newLines = prevLines + linesCleared;
           const newLevel = Math.floor(newLines / LINES_PER_LEVEL) + 1;
           setLevel(newLevel);
@@ -128,13 +156,14 @@ export function useTetris() {
         });
 
         const currentLevel = stateRef.current.level || 1;
-        setScore(prev => prev + (SCORE_TABLE[fullRows.length] || 0) * currentLevel);
+        setScore((prev) => prev + (SCORE_TABLE[fullRows.length] || 0) * currentLevel);
 
         // 生成下一个方块
         const next = nextPieceRef.current;
         const newNext = spawnPiece();
         setNextPiece(newNext);
 
+        if (!next) return;
         // 检查游戏结束
         if (checkCollision(clearedBoard, next, next.shape, 0, 0)) {
           setStatus(GAME_STATUS.GAMEOVER);
@@ -148,6 +177,7 @@ export function useTetris() {
       const newNext = spawnPiece();
       setNextPiece(newNext);
 
+      if (!next) return;
       if (checkCollision(merged, next, next.shape, 0, 0)) {
         setStatus(GAME_STATUS.GAMEOVER);
         setBoard(merged);
@@ -164,7 +194,7 @@ export function useTetris() {
     if (st !== GAME_STATUS.PLAYING || !cp) return;
 
     if (!checkCollision(bd, cp, cp.shape, 0, 1)) {
-      setCurrentPiece(prev => ({ ...prev, y: prev.y + 1 }));
+      setCurrentPiece({ ...cp, y: cp.y + 1 });
     } else {
       lockPiece(cp, bd);
     }
@@ -180,18 +210,18 @@ export function useTetris() {
       dropDistance++;
     }
 
-    const newPiece = { ...cp, y: cp.y + dropDistance };
-    setScore(prev => prev + dropDistance * 2);
+    const newPiece: Tetromino = { ...cp, y: cp.y + dropDistance };
+    setScore((prev) => prev + dropDistance * 2);
     lockPiece(newPiece, bd);
   }, [lockPiece]);
 
   // 左右移动
-  const move = useCallback((dir) => {
+  const move = useCallback((dir: number) => {
     const { status: st, currentPiece: cp, board: bd } = stateRef.current;
     if (st !== GAME_STATUS.PLAYING || !cp) return;
 
     if (!checkCollision(bd, cp, cp.shape, dir, 0)) {
-      setCurrentPiece(prev => ({ ...prev, x: prev.x + dir }));
+      setCurrentPiece({ ...cp, x: cp.x + dir });
     }
   }, []);
 
@@ -202,18 +232,13 @@ export function useTetris() {
 
     const data = TETROMINOES[cp.type];
     const newRotation = (cp.rotation + 1) % data.shapes.length;
-    const newShape = data.shapes[newRotation];
+    const newShape: Shape = data.shapes[newRotation];
 
     // 墙踢：尝试在当前位置或偏移位置旋转
     const kicks = [0, -1, 1, -2, 2];
     for (const kick of kicks) {
       if (!checkCollision(bd, cp, newShape, kick, 0)) {
-        setCurrentPiece(prev => ({
-          ...prev,
-          rotation: newRotation,
-          shape: newShape,
-          x: prev.x + kick,
-        }));
+        setCurrentPiece({ ...cp, rotation: newRotation, shape: newShape, x: cp.x + kick });
         return;
       }
     }
@@ -245,7 +270,7 @@ export function useTetris() {
 
   // 暂停/恢复
   const togglePause = useCallback(() => {
-    setStatus(prev => {
+    setStatus((prev) => {
       if (prev === GAME_STATUS.PLAYING) return GAME_STATUS.PAUSED;
       if (prev === GAME_STATUS.PAUSED) return GAME_STATUS.PLAYING;
       return prev;
@@ -254,7 +279,7 @@ export function useTetris() {
 
   // 自动下落的游戏循环 — 只依赖 status 和 dropTime
   // 使用 ref 调用最新的 drop，避免因 piece/board 变化而重置计时器
-  const dropRef = useRef(drop);
+  const dropRef = useRef<() => void>(drop);
   useEffect(() => {
     dropRef.current = drop;
   });
@@ -262,7 +287,7 @@ export function useTetris() {
   useEffect(() => {
     if (status !== GAME_STATUS.PLAYING) return;
 
-    const loop = (time) => {
+    const loop = (time: number) => {
       if (!lastTimeRef.current) lastTimeRef.current = time;
       const delta = time - lastTimeRef.current;
 
